@@ -16,9 +16,11 @@ def create_app():
     app = Flask(__name__)
     from routes.chat import chat
     app.register_blueprint(chat)
+    import os
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:2112@localhost/coding_platform'
-    app.config['SECRET_KEY'] = 'supersecretkey'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['SECRET_KEY'] = os.environ.get('GEMINI_API_KEY')
+
 
     db.init_app(app)
     migrate = Migrate(app, db)
