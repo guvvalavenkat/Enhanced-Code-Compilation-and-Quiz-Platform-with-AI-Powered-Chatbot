@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Create Quiz{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Create a New Quiz</h2>
+    <p class="lead">Enter the quiz title and add questions with answer options.</p>
+
+    <form method="POST" action="{{ url_for('faculty.create_quiz') }}">
+        <div class="mb-3">
+            <label for="title" class="form-label">Quiz Title:</label>
+            <input type="text" name="title" class="form-control" required>
+        </div>
+
+        <h4>Questions</h4>
+        <div id="questions-container">
+            <div class="question-block mb-4">
+                <label class="form-label">Question:</label>
+                <input type="text" name="questions[]" class="form-control" required>
+
+                <label class="form-label mt-2">Options:</label>
+                <input type="text" name="options_0[]" class="form-control mb-1" placeholder="Option A" required>
+                <input type="text" name="options_0[]" class="form-control mb-1" placeholder="Option B" required>
+                <input type="text" name="options_0[]" class="form-control mb-1" placeholder="Option C" required>
+                <input type="text" name="options_0[]" class="form-control mb-1" placeholder="Option D" required>
+
+                <label class="form-label mt-2">Correct Answer:</label>
+                <select name="correct_answers[]" class="form-select">
+                    <option value="A">Option A</option>
+                    <option value="B">Option B</option>
+                    <option value="C">Option C</option>
+                    <option value="D">Option D</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary" onclick="addQuestion()">➕ Add Another Question</button>
+        <button type="submit" class="btn btn-primary mt-3">Create Quiz</button>
+    </form>
+</div>
+
+<script>
+    let questionIndex = 1;
+
+    function addQuestion() {
+        let container = document.getElementById("questions-container");
+        let newBlock = document.createElement("div");
+        newBlock.className = "question-block mb-4";
+        newBlock.innerHTML = `
+            <label class="form-label">Question:</label>
+            <input type="text" name="questions[]" class="form-control" required>
+
+            <label class="form-label mt-2">Options:</label>
+            <input type="text" name="options_${questionIndex}[]" class="form-control mb-1" placeholder="Option A" required>
+            <input type="text" name="options_${questionIndex}[]" class="form-control mb-1" placeholder="Option B" required>
+            <input type="text" name="options_${questionIndex}[]" class="form-control mb-1" placeholder="Option C" required>
+            <input type="text" name="options_${questionIndex}[]" class="form-control mb-1" placeholder="Option D" required>
+
+            <label class="form-label mt-2">Correct Answer:</label>
+            <select name="correct_answers[]" class="form-select">
+                <option value="A">Option A</option>
+                <option value="B">Option B</option>
+                <option value="C">Option C</option>
+                <option value="D">Option D</option>
+            </select>
+        `;
+        container.appendChild(newBlock);
+        questionIndex++;
+    }
+</script>
+{% endblock %}

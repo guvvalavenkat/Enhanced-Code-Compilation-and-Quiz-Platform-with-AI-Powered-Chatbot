@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}View Quiz - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ quiz.title }}</h2>
+    <p class="lead">Below are the questions included in this quiz.</p>
+
+
+    <h3 class="mt-4">Questions</h3>
+    <ul class="list-group">
+        {% for question in questions %}
+            <li class="list-group-item">
+                <strong>Q{{ loop.index }}:</strong> {{ question.question_text }}
+                <ul class="mt-2">
+                    {% for option in question.options %}
+                        <li>{{ option }}</li>
+                    {% endfor %}
+                </ul>
+                <p class="text-success"><strong>Correct Answer:</strong> {{ question.correct_answer }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('faculty.dashboard') }}" class="btn btn-primary mt-4">Back to Dashboard</a>
+</div>
+{% endblock %}

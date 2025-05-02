@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Test Cases{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">🛠 Manage Test Cases</h2>
+
+    <form id="testcase-form" method="POST">
+        <div class="mb-3">
+            <label class="form-label">Select Coding Question:</label>
+            <select name="question_id" id="question-select" class="form-select" required>
+                {% for question in coding_questions %}
+                    <option value="{{ question.id }}" {% if question.id == selected_question.id %}selected{% endif %}>
+                        {{ question.title }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Test Case Input:</label>
+            <textarea name="input_data" class="form-control" rows="3" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Expected Output:</label>
+            <textarea name="expected_output" class="form-control" rows="3" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-plus-lg"></i> Add Test Case
+        </button>
+    </form>
+
+    <hr class="my-4">
+
+    <h4>📜 Existing Test Cases:</h4>
+    <ul class="list-group" id="testcase-list">
+        {% if test_cases %}
+            {% for test in test_cases %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Input:</strong> <pre>{{ test.input_data }}</pre>
+                        <strong>Expected Output:</strong> <pre>{{ test.expected_output }}</pre>
+                    </div>
+                    <a href="{{ url_for('faculty.delete_testcase', testcase_id=test.id) }}"
+                       class="btn btn-danger btn-sm" onclick="return confirm('Delete this test case?')">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                </li>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-muted">No test cases added yet.</p>
+        {% endif %}
+    </ul>
+</div>
+
+
+<script>
+function updateFormAction() {
+    const form = document.getElementById("testcase-form");
+    const selectedQuestionId = document.getElementById("question-select").value;
+
+    if (selectedQuestionId) {
+        form.action = `/faculty/question/${selectedQuestionId}/testcases`;
+        console.log("Form action set to:", form.action);  // ✅ For debugging
+    }
+}
+
+// Run on page load
+document.addEventListener("DOMContentLoaded", updateFormAction);
+
+// Run when dropdown changes
+document.getElementById("question-select").addEventListener("change", updateFormAction);
+</script>
+{% endblock %}

@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="text-center" style="color:white">Welcome, {{ current_user.username }}!</h2>
+    <p style="text-align: center;
+    color:white;">Practice coding, take quizzes, and track your progress.</p>
+
+    <div class="row mb-4" >
+        <div class="col-md-10">
+            <div style="margin-left:200px;" class="d-flex justify-content-around flex-wrap mb-4 gap-3">
+
+                <div class="text-center">
+                    <div class="circle-progress bg-primary text-white">
+                        <i class="bi bi-code-slash"></i>
+                        <div>{{ coding_questions|length }}</div>
+                    </div>
+                    <p class="mt-2" style="text-align: center;
+    color:white;">Coding</p>
+                </div>
+                <div class="text-center">
+                    <div class="circle-progress bg-success text-white">
+                        <i class="bi bi-clipboard"></i>
+                        <div>{{ non_coding_questions|length }}</div>
+                    </div>
+                    <p class="mt-2" style="text-align: center;
+    color:white;">Non-Coding</p>
+                </div>
+                <div class="text-center">
+                    <div class="circle-progress bg-warning text-dark">
+                        <i class="bi bi-book"></i>
+                        <div>{{ completed_quizzes|length }}</div>
+                    </div>
+                    <p class="mt-2" style="text-align: center;
+    color:white;">Quizzes</p>
+                </div>
+                <div class="text-center">
+                    <div class="circle-progress bg-danger text-white">
+                        <i class="bi bi-check-circle"></i>
+                        <div>{{ solved_questions|length }}</div>
+                    </div>
+                    <p class="mt-2" style="text-align: center;
+    color:white;">Solved</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group shadow-sm">
+                <a class="list-group-item list-group-item-action active" data-bs-toggle="tab" href="#coding"><i class="bi bi-code-slash"></i> Coding Questions</a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="tab" href="#non-coding"><i class="bi bi-clipboard"></i> Non-Coding</a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="tab" href="#quizzes"><i class="bi bi-book"></i> Quizzes</a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="tab" href="#performance"><i class="bi bi-bar-chart"></i> Performance</a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="tab-content">
+                <div id="coding" class="tab-pane fade show active">
+                    <div class="card shadow-sm">
+                        <div class="card-header d-flex justify-content-between">
+                            <h5>Coding Questions</h5>
+                            <div>
+                                <a href="{{ url_for('compiler.code_editor') }}" class="btn btn-primary btn-sm"><i class="bi bi-terminal"></i> Open Editor</a>
+                                <a href="{{ url_for('student.ask') }}" class="btn btn-success btn-sm"><i class="bi bi-question-circle"></i> Post Question</a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                {% for question in coding_questions %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <strong>{{ question.title }}</strong>
+                                        <div>
+                                            {% if question.is_solved %}
+                                                <span class="badge bg-success">Solved</span>
+                                            {% else %}
+                                                <a href="{{ url_for('student.solve', question_id=question.id) }}" class="btn btn-sm btn-info"><i class="bi bi-play"></i> Solve</a>
+                                            {% endif %}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="non-coding" class="tab-pane fade">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5>Non-Coding Questions</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                {% for question in non_coding_questions %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <strong>{{ question.title }}</strong>
+                                        <a href="{{ url_for('student.take_quiz', quiz_id=question.related_quiz_id) }}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i> Take Quiz</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="quizzes" class="tab-pane fade">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-header"><h5>Available Quizzes</h5></div>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        {% for quiz in available_quizzes %}
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <strong>{{ quiz.title }}</strong>
+                                                <a href="{{ url_for('student.take_quiz', quiz_id=quiz.id) }}" class="btn btn-sm btn-warning"><i class="bi bi-play"></i> Start</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-header"><h5>Completed Quizzes</h5></div>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        {% for quiz in completed_quizzes %}
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <strong>{{ quiz.title }}</strong>
+                                                <span class="badge bg-success">Completed</span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="performance" class="tab-pane fade">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5>Your Performance</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                {% for feedback in feedbacks %}
+                                    <li class="list-group-item">
+                                        <strong>Feedback from {{ feedback.faculty.username }}:</strong> {{ feedback.message }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .circle-progress {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    margin: auto;
+}
+.circle-progress i {
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+}
+
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let hash = window.location.hash;
+    if (hash) {
+        let activeTab = document.querySelector(`a[href="${hash}"]`);
+        if (activeTab) {
+            new bootstrap.Tab(activeTab).show();
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}View Student Code{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ student.username }}'s Code Submissions</h2>
+    <ul class="list-group">
+        {% for submission in submissions %}
+            <li class="list-group-item">
+                <strong>Question:</strong> {{ submission.question.questions }} <br>
+                <strong>Language:</strong> {{ submission.language }} <br>
+                <strong>Submitted Code:</strong>
+                <pre class="bg-light p-3">{{ submission.code }}</pre>
+                <pre class="bg-light border p-3 rounded" style="white-space: pre-wrap;">{{ submission.output }}</pre> <br>
+                <strong>Execution Time:</strong> {{ submission.execution_time }} sec <br>
+                <strong>Efficiency:</strong> {{ submission.efficiency }}% <br>
+
+            </li>
+        {% else %}
+            <li class="list-group-item text-muted">No code submissions found.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

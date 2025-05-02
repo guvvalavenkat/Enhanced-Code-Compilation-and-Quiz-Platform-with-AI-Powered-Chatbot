@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Post a New Question{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Post a New Question</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Title:</label>
+            <input type="text" name="title" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">description:</label>
+            <input type="text" name="description" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Question Type:</label>
+            <select name="question_type" class="form-select">
+                <option value="Coding">Coding</option>
+                <option value="Non-Coding">Non-Coding</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Question Details:</label>
+            <textarea name="content" class="form-control" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Post Question</button>
+    </form>
+
+    <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}

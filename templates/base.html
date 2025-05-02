@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Dev Institute - Learn with the best courses available online">
+    <title>{% block title %}Institute{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+
+    <script src="{{ url_for('static', filename='script2.js') }}" defer></script>
+
+</head>
+<body>
+
+    <nav class="navbar fixed-top navbar-expand-lg bg-light">
+        <div class="container-fluid container">
+            <a class="navbar-brand" href="#">Institute</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.home') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('chat.chat_page') }}">Chatbot</a></li>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                <li class="nav-item">
+                    <form id="logoutForm" action="{{ url_for('auth.logout') }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-link nav-link">Logout</button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.register' ) }}">Register</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    </nav>
+
+    <div class="container">
+                {% block content %}{% endblock %}
+            </div>
+
+    <header id="home" class="hero">
+        <div class="hero-content">
+            <section id="courses" class="fade-in">
+        <div class="container text-center">
+            <h2>Our Courses</h2>
+            <p>Explore top-rated courses for your career growth.</p>
+        </div>
+    </section>
+
+            <section id="contact" class="fade-in">
+                <div class="container text-center">
+                    <h2>Contact Us</h2>
+                    <p>Reach out for inquiries and support.</p>
+                </div>
+            </section>
+
+        </div>
+    </header>
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login as</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Select your role to continue:</p>
+                    <a href="{{ url_for('student.student_login') }}" class="btn btn-primary w-100 my-2">Student</a>
+                    <a href="{{ url_for('faculty.faculty_login') }}" class="btn btn-secondary w-100 my-2">Faculty</a>
+                    <a href="{{ url_for('admin.admin_login') }}" class="btn btn-danger w-100 my-2">Admin</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

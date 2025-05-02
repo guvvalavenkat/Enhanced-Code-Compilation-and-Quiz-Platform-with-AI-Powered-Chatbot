@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Add Test Cases{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Add Test Cases for {{ question.title }}</h2>
+    <p><strong>Description:</strong> {{ question.questions }}</p>
+
+    <form action="{{ url_for('faculty.add_testcase', question_id=question.id) }}" method="POST">
+        <div class="mb-3">
+            <label for="input_data" class="form-label">Test Case Input:</label>
+            <textarea id="input_data" name="input_data" class="form-control" rows="3" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="expected_output" class="form-label">Expected Output:</label>
+            <textarea id="expected_output" name="expected_output" class="form-control" rows="3" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">➕ Add Test Case</button>
+    </form>
+
+</div>
+{% endblock %}

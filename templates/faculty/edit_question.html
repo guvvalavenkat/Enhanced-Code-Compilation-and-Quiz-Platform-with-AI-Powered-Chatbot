@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Coding Question{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Coding Question</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="title" class="form-label">Question Title</label>
+            <input type="text" class="form-control" name="title" value="{{ question.title }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">Question Description</label>
+            <textarea class="form-control" name="content" rows="4" required>{{ question.content }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Update Question</button>
+        <a href="{{ url_for('faculty.dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

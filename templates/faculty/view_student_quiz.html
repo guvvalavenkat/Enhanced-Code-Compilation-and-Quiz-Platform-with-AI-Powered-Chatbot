@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}View Student Quiz Results{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📊 {{ student.username }}'s Quiz Results</h2>
+    <ul class="list-group">
+        {% for result in quiz_results %}
+            <li class="list-group-item">
+                <strong>Quiz:</strong> {{ result.quiz.title }} <br>
+                <strong>Score:</strong> {{ result.score }} / {{ result.total_questions }} <br>
+                <strong>Answers:</strong>
+                <ul>
+                    {% for answer in result.answers %}
+                        <li><strong>Q:</strong> {{ answer.question_text }} <br> 
+                            <strong>Student Answer:</strong> {{ answer.student_answer }} 
+                            {% if answer.is_correct %}
+                                ✅
+                            {% else %}
+                                 (Correct: {{ answer.correct_answer }})
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% else %}
+            <li class="list-group-item text-muted">No quiz results found.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

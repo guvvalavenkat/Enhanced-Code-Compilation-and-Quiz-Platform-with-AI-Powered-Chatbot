@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Track Student Progress{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Progress of {{ student.username }}</h2>
+
+    <h3 class="mt-4">Completed Quizzes</h3>
+    <ul class="list-group">
+        {% for quiz in completed_quizzes %}
+            <li class="list-group-item">
+                <strong>{{ quiz.title }}</strong> - Score: <span class="badge bg-primary">{{ quiz.score }}%</span>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3 class="mt-4"> Solved Coding Questions</h3>
+    <ul class="list-group">
+        {% for question in solved_questions %}
+            <li class="list-group-item">
+                <strong>{{ question.title }}</strong> - Language Used: <span class="badge bg-info">{{ question.language }}</span>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('faculty.dashboard') }}" class="btn btn-secondary mt-3">⬅ Back to Dashboard</a>
+</div>
+{% endblock %}

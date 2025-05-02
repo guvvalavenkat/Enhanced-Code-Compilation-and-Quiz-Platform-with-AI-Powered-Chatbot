@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Compiler</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.14/ace.js"></script>
+    <style>
+        body { background-color: #f8f9fa; }
+        .container { max-width: 800px; margin-top: 50px; }
+        #editor { height: 250px; border: 1px solid #ced4da; }
+        pre { background-color: #e9ecef; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container text-center">
+        <h1 class="mb-4">Online Code Compiler</h1>
+
+        <div class="mb-3">
+            <label for="language" class="form-label"><b>Select Language:</b></label>
+            <select id="language" class="form-select w-50 mx-auto">
+                <option value="python">Python</option>
+                <option value="java">Java</option>
+                <option value="c">C</option>
+                <option value="cpp">C++</option>
+            </select>
+        </div>
+
+        <div id="editor"></div>
+
+        <div class="mb-3">
+            <label for="stdin" class="form-label"><b>Input (Optional):</b></label>
+            <textarea id="stdin" class="form-control" rows="2" placeholder="Enter input values (if needed)"></textarea>
+        </div>
+
+        <button class="btn btn-primary" onclick="runCode()">Run</button>
+
+        <h3 class="mt-4">Output:</h3>
+        <pre id="output">Click "Run" to execute the code...</pre>
+    </div>
+
+    <script>
+        let editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/python");
+
+        document.getElementById("language").addEventListener("change", function() {
+            let mode = this.value === "python" ? "python" : this.value === "java" ? "java" : "c_cpp";
+            editor.session.setMode("ace/mode/" + mode);
+        });
+
+        function runCode() {
+            let code = editor.getValue();
+            let language = document.getElementById("language").value;
+            let stdin = document.getElementById("stdin").value;
+            document.getElementById("output").innerText = "Running...";
+
+            fetch("/run_code", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: code, language: language, stdin: stdin })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("output").innerText =
+                    "Message: " + data.message + "\n" +
+                    "Output:\n" + (data.stdout || "No Output") + "\n" +
+                    "Errors:\n" + (data.stderr || data.compile_output || "No Errors");
+            })
+            .catch(error => {
+                document.getElementById("output").innerText = "Error: " + error.message;
+            });
+        }
+    </script>
+</body>
+</html>

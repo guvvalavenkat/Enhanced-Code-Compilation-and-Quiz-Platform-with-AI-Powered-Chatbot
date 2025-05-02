@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    <nav class="sidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+            <li><a href="#users" class="tab-link active"><i class="bi bi-people"></i> Users</a></li>
+            <li><a href="#quizzes" class="tab-link"><i class="bi bi-book"></i> Quizzes</a></li>
+            <li><a href="#questions" class="tab-link"><i class="bi bi-question-circle"></i> Questions</a></li>
+            <li><a href="#submissions" class="tab-link"><i class="bi bi-check-circle"></i> Submissions</a></li>
+        </ul>
+        <div class="stats mt-3">
+            <marquee direction="up" scrollamount="3">
+                <p><strong>Users:</strong> {{ users|length }}</p>
+                <p><strong>Quizzes:</strong> {{ quizzes|length }}</p>
+                <p><strong>Questions:</strong> {{ questions|length }}</p>
+                <p><strong>Submissions:</strong> {{ submissions|length }}</p>
+            </marquee>
+        </div>
+    </nav>
+
+    <div class="card" style="margin-left: 270px; width: calc(100% - 270px);">
+      <div class="card-body">
+        <div class="main-content p-4">
+            <h2 class="text-center">Admin Dashboard</h2>
+            <p class="text-center">Manage users, quizzes, questions, and submissions.</p>
+
+            <div class="tab-content mt-4">
+                <div id="users" class="tab-pane active">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4>👤 Users</h4>
+                        <div>
+                            <button class="btn btn-outline-primary btn-sm filter-btn" data-role="all">All</button>
+                            <button class="btn btn-outline-success btn-sm filter-btn" data-role="student">Show Students</button>
+                            <button class="btn btn-outline-info btn-sm filter-btn" data-role="faculty">Show Faculty</button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered ">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Assign Role</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-table-body">
+                            {% for user in users %}
+                            <tr data-role="{{ user.role }}">
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.role }}</td>
+                                <td>
+                                    <form action="{{ url_for('admin.assign_role', user_id=user.id) }}" method="POST" class="d-flex">
+                                        <select name="role" class="form-select form-select-sm me-1">
+                                            <option disabled selected>Change Role</option>
+                                            <option value="student">Student</option>
+                                            <option value="faculty">Faculty</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-primary">Assign</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm delete-btn" data-id="{{ user.id }}" data-type="user">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    </div>
+                </div>
+
+
+                <div id="quizzes" class="tab-pane">
+                    <h4>Quizzes</h4>
+                    <p>Manage all quizzes here.</p>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr><th>ID</th><th>Title</th><th>Faculty</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for quiz in quizzes %}
+                            <tr>
+                                <td>{{ quiz.id }}</td>
+                                <td>{{ quiz.title }}</td>
+                                <td>{{ quiz.faculty.username }}</td>
+                                <td>
+                                    <form action="{{ url_for('admin.delete_quiz', quiz_id=quiz.id) }}" method="POST">
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                <div id="questions" class="tab-pane">
+                    <h4>Questions</h4>
+                    <p>Manage all questions here.</p>
+                    <div class="table-responsive">
+                    <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr><th>ID</th><th>Title</th><th>Type</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for question in questions %}
+                        <tr>
+                            <td>{{ question.id }}</td>
+                            <td>{{ question.title }}</td>
+                            <td>{{ question.question_type }}</td>
+                            <td>
+                                <form action="{{ url_for('admin.delete_question', question_id=question.id) }}" method="POST">
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                    </div>
+                </div>
+                <div id="submissions" class="tab-pane">
+                    <h4>Submissions</h4>
+                    <p>Review all submissions here.</p>
+                    <div class="table-responsive">
+                    <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr><th>ID</th><th>Student</th><th>Question</th><th>Language</th><th>Execution Time</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for submission in submissions %}
+                        <tr>
+                            <td>{{ submission.id }}</td>
+                            <td>{{ submission.student.username }}</td>
+                            <td>{{ submission.question.title }}</td>
+                            <td>{{ submission.language }}</td>
+                            <td>{{ submission.execution_time }} sec</td>
+                            <td>
+                                <form action="{{ url_for('admin.delete_submission', submission_id=submission.id) }}" method="POST">
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<style>
+.sidebar {
+    overflow-y: auto;
+    width: 250px;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    text-align: center;
+    overflow: hidden;
+}
+.sidebar h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+.sidebar ul li {
+    margin: 15px 0;
+}
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: block;
+    padding: 10px;
+    transition: background 0.3s;
+}
+.sidebar ul li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+.stats {
+    margin-top: 20px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+.main-content {
+    margin-left: 10px;
+    padding: 10px;
+    flex-grow: 1;
+}
+.tab-pane {
+    display: none;
+}
+.tab-pane.active {
+    display: block;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".tab-link").forEach(link => {
+        link.addEventListener("click", function (event) {
+            event.preventDefault();
+            document.querySelectorAll(".tab-pane").forEach(tab => tab.classList.remove("active"));
+            document.querySelector(this.getAttribute("href")).classList.add("active");
+        });
+    });
+
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const id = this.getAttribute("data-id");
+            const type = this.getAttribute("data-type");
+            if (confirm(`Are you sure you want to delete this ${type}?`)) {
+                fetch(`/admin/delete/${type}/${id}`, { method: "POST" })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert("Error deleting " + type);
+                        }
+                    });
+            }
+        });
+    });
+});
+</script>
+<script>
+    // Tab switching
+    document.querySelectorAll('.tab-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+
+            const target = this.getAttribute('href');
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            document.querySelector(target).classList.add('active');
+        });
+    });
+
+    // Filter users by role
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const role = btn.getAttribute('data-role');
+            document.querySelectorAll('#user-table-body tr').forEach(row => {
+                const userRole = row.getAttribute('data-role');
+                row.style.display = (role === 'all' || role === userRole) ? '' : 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

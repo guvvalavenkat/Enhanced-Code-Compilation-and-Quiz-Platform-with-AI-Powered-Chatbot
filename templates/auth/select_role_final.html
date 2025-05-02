@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Select Role</title>
+<style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('/static/dashboard_background.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.75);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px #00f0ff;
+            text-align: center;
+        }
+        .container h2 {
+            color: #00f0ff;
+            margin-bottom: 30px;
+        }
+        .container a {
+            display: block;
+            margin: 15px 0;
+            padding: 12px;
+            text-decoration: none;
+            background-color: #00f0ff;
+            color: black;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .container a:hover {
+            background-color: #00c2e3;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar fixed-top navbar-expand-lg bg-light">
+<div class="container-fluid container">
+<a class="navbar-brand" href="#">Institute</a>
+<button aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarContent" data-bs-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarContent">
+<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+<li class="nav-item">
+<a class="nav-link" href="{{ url_for('auth.home') }}">Home</a>
+</li>
+<li class="nav-item">
+<li class="nav-item"><a class="nav-link" href="{{ url_for('chat.chat_page') }}">Chatbot</a></li>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="#contact">Contact</a>
+</li>
+                    {% if current_user.is_authenticated %}
+                <li class="nav-item">
+<form action="{{ url_for('auth.logout') }}" class="d-inline" id="logoutForm" method="POST">
+<button class="btn btn-link nav-link" type="submit">Logout</button>
+</form>
+</li>
+                {% else %}
+                <li class="nav-item">
+<a class="nav-link" data-bs-target="#loginModal" data-bs-toggle="modal" href="#">Login</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="{{ url_for('auth.register' ) }}">Register</a>
+</li>
+                {% endif %}
+            </ul>
+</div>
+</div>
+</nav>
+<div class="container">
+<h2>Select Your Login Role</h2>
+<a href="/student_login">Student Login</a>
+<a href="/faculty_login">Faculty Login</a>
+<a href="/admin_login">Admin Login</a>
+</div>
+</body>
+</html>

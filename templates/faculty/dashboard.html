@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Faculty Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    .sidebar {
+        height: 100vh;
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: #343a40;
+        padding-top: 70px;
+        transition: width 0.3s;
+    }
+    .sidebar a {
+        padding: 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.3s;
+    }
+    .sidebar a:hover {
+        background: #495057;
+    }
+    .content-area {
+        margin-left: 260px;
+        padding: 20px;
+        transition: margin-left 0.3s;
+    }
+    .section { display: none; animation: fadeIn 0.5s; }
+    .active-section { display: block; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+
+<div class="sidebar">
+    <a href="#" onclick="showSection('quizzes')">Quizzes <span class="badge bg-primary">{{ quizzes | length }}</span></a>
+    <a href="#" onclick="showSection('coding-questions')">Coding Questions <span class="badge bg-success">{{ coding_questions | length }}</span></a>
+    <a href="#" onclick="showSection('students')">Students <span class="badge bg-warning">{{ students | length }}</span></a>
+    <a href="#" onclick="showSection('feedback')">Feedbacks <span class="badge bg-danger">{{ feedbacks | length }}</span></a>
+    <a href="#" onclick="showSection('testcases')">Test Cases <span class="badge bg-info">{{ testcase | length }}</span></a>
+</div>
+
+<div class="content-area">
+    <h2 class="text-center" style="color:white">Faculty Dashboard</h2>
+    <div id="quizzes" class="section active-section">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Your Quizzes</h5>
+                <a href="{{ url_for('faculty.create_quiz') }}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-lg"></i> Create Quiz
+                </a>
+            </div>
+            <div class="card-body">
+                 {% if quizzes %}
+                <ul class="list-group">
+                    {% for quiz in quizzes %}
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>{{ quiz.title }}</strong>
+                            </div>
+                            <!-- Quiz Questions -->
+                            {% if quiz.quiz_questions %}
+                                <ul class="list-group mt-2">
+                                    {% for quiz_question in quiz.quiz_questions %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ quiz_question.question_text }}
+                                            <div class="btn-group">
+                                                <a href="{{ url_for('faculty.view_quiz', quiz_id=quiz.id) }}" class="btn btn-sm btn-info">
+                                                    <i class="bi bi-eye"></i> View
+                                                </a>
+                                                <div class="btn-group">
+                                                <a href="{{ url_for('faculty.edit_quiz_question', quiz_question_id=quiz_question.id) }}" class="btn btn-sm btn-warning">
+                                                    <i class="bi bi-pencil"></i> Edit
+                                                </a>
+                                                </div>
+                                                <div class="btn-group">
+                                                <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ url_for('faculty.delete_quiz', quiz_id=quiz.id) }}')">
+                                                    <i class="bi bi-trash"></i> Delete
+                                                </button>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted mt-2">No questions added yet.</p>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-center text-muted">No quizzes available.</p>
+            {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    <div id="coding-questions" class="section">
+        <h5> Your Coding Questions</h5>
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between">
+                        <h5>Your Coding Questions</h5>
+                        <a href="{{ url_for('faculty.post_question') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Post Question</a>
+                    </div>
+            <ul class="list-group">
+                {% for question in coding_questions %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <strong>{{ question.questions }}</strong>
+                        <div>
+                            <a href="{{ url_for('faculty.edit_question', question_id=question.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <button class="btn btn-danger btn-sm" onclick="confirmDelete('{{ url_for('faculty.delete_question', question_id=question.id) }}')">Delete</button>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div id="students" class="section">
+        <h5>Student Progress</h5>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>Student</th><th>Completed Quizzes</th><th>Solved Questions</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.username }}</td>
+                    <td>{{ student_progress[student.id].completed_quizzes }}</td>
+                    <td>{{ student_progress[student.id].solved_questions }}</td>
+                    <td>
+                        <a href="{{ url_for('faculty.view_student_code', student_id=student.id) }}" class="btn btn-info btn-sm">Code</a>
+                        <a href="{{ url_for('faculty.view_student_quiz', student_id=student.id) }}" class="btn btn-warning btn-sm">Quiz</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div id="testcases" class="section">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5>Manage Test Cases</h5>
+                </div>
+                <div class="card-body">
+                    <form id="testcase-form" action="{{ url_for('faculty.add_testcase', question_id=0) }}" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Select Coding Question:</label>
+                            <select name="question_id" id="question-select" class="form-select" required onchange="updateFormAction()">
+                                {% for question in coding_questions %}
+                                    <option value="{{ question.id }}">{{ question.questions }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Test Case Input:</label>
+                            <textarea name="input_data" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Expected Output:</label>
+                            <textarea name="expected_output" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success"><i class="bi bi-plus-lg"></i> Add Test Case</button>
+                    </form>
+
+                    <h4 class="mt-4">Existing Test Cases:</h4>
+                    {% if test_cases %}
+                        <ul class="list-group">
+                            {% for test in test_cases %}
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <div>
+                                        <strong>Input:</strong> <pre>{{ test.input_data }}</pre>
+                                        <strong>Expected Output:</strong> <pre>{{ test.expected_output }}</pre>
+                                    </div>
+                                    <a href="{{ url_for('faculty.delete_testcase', testcase_id=test.id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-center text-muted">No test cases added yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedback" class="section">
+            <div class="card shadow-sm" style="margin-left:200px">
+                <div class="card-header">
+                    <h5>Provide Feedback</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('faculty.give_feedback') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Select Student:</label>
+                            <select name="student_id" class="form-select" required>
+                                {% for student in students %}
+                                    <option value="{{ student.id }}">{{ student.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Feedback Message:</label>
+                            <textarea name="message" class="form-control" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success"><i class="bi bi-send"></i> Send</button>
+                    </form>
+                </div>
+            </div>
+    </div>
+
+<script>
+    function updateFormAction() {
+        let form = document.getElementById("testcase-form");
+        let selectedQuestionId = document.getElementById("question-select").value;
+        form.action = "{{ url_for('faculty.add_testcase', question_id=0) }}".replace("0", selectedQuestionId);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        updateFormAction();
+    });
+</script>
+
+<script>
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active-section');
+        });
+        document.getElementById(sectionId).classList.add('active-section');
+    }
+
+    function confirmDelete(url) {
+        if (confirm("Are you sure you want to delete this?")) {
+            window.location.href = url;
+        }
+    }
+</script>
+{% endblock %}
+faculty dashboard template replace cheyamanu ee code tho

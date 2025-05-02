@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Faculty Login</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background: url('/static/student_left_bg.png') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+        .form-area {
+            position: absolute;
+            top: 50%;
+            left: 8%;
+            transform: translateY(-50%);
+            width: 300px;
+        }
+        .form-area h2 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: #00f0ff;
+            text-shadow: 0 0 5px #00f0ff;
+        }
+        .form-area input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-bottom: 2px solid #00f0ff;
+            color: #00f0ff;
+            font-size: 15px;
+            outline: none;
+            border-radius: 5px 5px 0 0;
+        }
+        .form-area input::placeholder {
+            color: #8ae9ff;
+        }
+        .form-area button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background-color: #00f0ff;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .form-area button:hover {
+            background-color: #00c6d7;
+        }
+    </style>
+</head>
+<body>
+
+<header style="background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 8px rgba(0,0,0,0.1);">
+    <h2 style="margin: 0; font-weight: bold;">Institute</h2>
+    <nav>
+        <a href="/" style="margin-right: 20px; text-decoration: none; color: black;">Home</a>
+        <a href="/chatbot" style="margin-right: 20px; text-decoration: none; color: black;">Chatbot</a>
+        <a href="/contact" style="margin-right: 20px; text-decoration: none; color: black;">Contact</a>
+        <a href="/select-role" style="margin-right: 20px; text-decoration: none; color: black;">Login</a>
+        <a href="/register" style="text-decoration: none; color: black;">Register</a>
+    </nav>
+</header>
+
+    <form method="POST" class="form-area">
+        <h2>Faculty Login</h2>
+        <input type="email" name="email" placeholder="Enter your email" required>
+        <input type="password" name="password" placeholder="Enter your password" required>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>

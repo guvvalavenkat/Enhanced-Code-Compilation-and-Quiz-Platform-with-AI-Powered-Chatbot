@@ -1,0 +1,93 @@
+{% extends "home.html" %}
+
+{% block title %}Test Cases & Code Execution{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">📝 Test Cases for Question {{ question.title }}</h2>
+    <p><strong>Description:</strong> {{ question.questions }}</p>
+
+    <h3>Test Cases</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Input</th>
+                <th>Expected Output</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for test in test_cases %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ test.input_data }}</td>
+                <td>{{ test.expected_output }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Language Selection -->
+    <label for="language" class="form-label">Select Language:</label>
+    <select id="language" class="form-select mb-3">
+        <option value="python">Python</option>
+        <option value="c">C</option>
+        <option value="cpp">C++</option>
+        <option value="java">Java</option>
+    </select>
+
+    <!-- Code Editor -->
+    <div id="editor" style="height: 300px; border: 1px solid #ccc;"></div>
+
+    <!-- Run Code Button -->
+    <button class="btn btn-primary mt-3" onclick="submitCode()">▶ Run Code</button>
+
+    <!-- Output Section -->
+    <h3 class="mt-4">📤 Output:</h3>
+    <pre id="output" class="p-3 bg-light border">Waiting for execution...</pre>
+</div>
+
+<!-- ACE Code Editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/python");
+
+    $("#language").change(function() {
+        var lang = $(this).val();
+        editor.session.setMode(lang === "java" ? "ace/mode/java" : (lang === "c" || lang === "cpp") ? "ace/mode/c_cpp" : "ace/mode/python");
+    });
+
+    function submitCode() {
+        var code = editor.getValue();
+        var language = $("#language").val();
+        var question_id = {{ question.id|tojson }};
+
+        $("#output").text("⏳ Running Test Cases...");
+
+        $.ajax({
+            url: "/run_code",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                code: code,
+                language: language,
+                question_id: question_id
+            }),
+            success: function(response) {
+                let outputText = response.status + "\n\n";
+                response.results.forEach((test, index) => {
+                    outputText += `📝 Test Case ${index + 1}:\n📥 Input: ${test.input}\n✅ Expected: ${test.expected}\n📤 Output: ${test.output}\n➡ Status: ${test.status}\n\n`;
+                });
+                $("#output").text(outputText);
+            },
+            error: function() {
+                $("#output").text("⚠️ Server error. Please try again.");
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Code Editor{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Online Code Compiler</h2>
+
+    <!-- Programming Language Selection -->
+    <label for="language" class="form-label">Select Language:</label>
+    <select id="language" class="form-select mb-3">
+        <option value="71">Python</option>
+        <option value="50">C</option>
+        <option value="54">C++</option>
+        <option value="62">Java</option>
+    </select>
+
+    <!-- Code Editor -->
+    <div id="editor" style="height: 300px; border: 1px solid #ccc;"></div>
+
+    <!-- Run Button -->
+    <button class="btn btn-success mt-3" onclick="submitCode()">Run Code</button>
+
+    <!-- Output Section -->
+    <h3 class="mt-4">Output:</h3>
+    <pre id="output" class="p-3 bg-light border">Waiting for code execution...</pre>
+</div>
+
+<!-- ACE Code Editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/python"); // Default mode is Python
+
+    // Change editor mode based on selected language
+    $("#language").change(function() {
+        var language = $(this).val();
+        if (language == "71") editor.session.setMode("ace/mode/python");
+        else if (language == "50" || language == "54") editor.session.setMode("ace/mode/c_cpp");
+        else if (language == "62") editor.session.setMode("ace/mode/java");
+    });
+
+    function submitCode() {
+        var code = editor.getValue();
+        var language_id = $("#language").val();
+
+        $("#output").text("Running...");
+
+        // ✅ Wrap Java, C, and C++ Code Automatically
+        if (language_id == "62") {
+            code = `public class Main { public static void main(String[] args) { ${code} }}`;
+        }
+
+        $.ajax({
+            url: "/compiler/compile",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ code: code, language_id: language_id }),
+            success: function(response) {
+                let resultText = "Message: " + (response.message || "Unknown status") + "\n";
+                if (response.stdout) resultText += "\n📜 Output:\n" + response.stdout;
+                else if (response.compile_output) resultText += "\n⚠️ Compilation Error:\n" + response.compile_output;
+                else if (response.stderr) resultText += "\n💥 Runtime Error:\n" + response.stderr;
+                else resultText += "\n❌ No Output or Errors.";
+                $("#output").text(resultText);
+            },
+            error: function() {
+                $("#output").text("⚠️ Server error. Please try again.");
+            }
+        });
+    }
+</script>
+{% endblock %}

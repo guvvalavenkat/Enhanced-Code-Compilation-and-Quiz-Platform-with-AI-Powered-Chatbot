@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Take Quiz{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">{{ quiz.title }}</h2>
+
+    {% if questions %}
+       <form action="{{ url_for('student.submit_quiz', quiz_id=quiz.id) }}" method="POST">
+            {% for question in questions %}
+                <div class="mb-3">
+                    <p><strong>{{ loop.index }}. {{ question.question_text }}</strong></p>
+                    {% for option in question.get_options() %}
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" name="q{{ question.id }}" value="{{ option }}" required>
+                            <label class="form-check-label">{{ option }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        <button type="submit" class="btn btn-primary">Submit Quiz</button>
+       </form>
+
+    {% else %}
+        <p class="text-muted">No questions available for this quiz.</p>
+    {% endif %}
+</div>
+
+<script>
+    document.getElementById("quizForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        alert("Quiz submitted successfully!");
+        window.location.href = "/student/dashboard";
+    });
+</script>
+{% endblock %}

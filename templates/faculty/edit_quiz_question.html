@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Quiz Question{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Quiz Question</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="question_text" class="form-label">Question Text</label>
+            <textarea class="form-control" name="question_text" rows="2" required>{{ quiz_question.question_text }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="options" class="form-label">Options</label>
+            {% for option in quiz_question.options %}
+                <input type="text" class="form-control mb-2" name="options[]" value="{{ option }}" required>
+            {% endfor %}
+        </div>
+
+        <div class="mb-3">
+            <label for="correct_answer" class="form-label">Correct Answer</label>
+            <input type="text" class="form-control" name="correct_answer" value="{{ quiz_question.correct_answer }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Update Quiz Question</button>
+        <a href="{{ url_for('faculty.dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
