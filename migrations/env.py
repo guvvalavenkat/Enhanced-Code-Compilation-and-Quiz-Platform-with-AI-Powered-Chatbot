@@ -9,8 +9,9 @@ import os
 # Your Railway DB URL
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://postgres:5189836@db.mwcuoepzqjisgzfjse.supabase.co:5432/postgres"
+    "postgresql://postgres.mwcuoepzqjisgzfjse:5189836@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
 )
+
 
 
 # Alembic Config object
