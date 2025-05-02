@@ -11,15 +11,12 @@ bcrypt = Bcrypt()
 socketio = SocketIO(cors_allowed_origins="*")
 login_manager = LoginManager()
 
-
 def create_app():
     app = Flask(__name__)
 
-    # Configuration from environment variables
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')  # changed from GEMINI_API_KEY
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'postgresql://neondb_owner:npg_2PTeq1jmFndJ@ep-empty-frost-a1d07jnc-pooler.ap-southeast-1.aws.neon.tech/coding_platform?sslmode=require'
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'super-secret-key')
 
-    # Initialize extensions
     db.init_app(app)
     migrate = Migrate(app, db)
     bcrypt.init_app(app)
@@ -27,7 +24,6 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
 
-    # Import and register blueprints
     from routes.chat import chat
     from routes.auth import auth
     from routes.compiler import compiler
@@ -42,13 +38,11 @@ def create_app():
     app.register_blueprint(faculty, url_prefix='/faculty')
     app.register_blueprint(admin, url_prefix='/admin')
 
-    # User loader for login manager
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
 
     return app
-
 
 if __name__ == '__main__':
     app = create_app()
