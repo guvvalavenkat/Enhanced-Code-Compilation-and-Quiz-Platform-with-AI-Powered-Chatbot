@@ -9,7 +9,7 @@ import os
 # Your Railway DB URL
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+psycopg2://postgres:KroLYKAvjymiiGjaKiEgKwXwbzLQnqvr@metro.proxy.rlwy.net:36971/railway"
+    "postgresql://postgres:5189836@db.mwcuoepzqjisgzfjse.supabase.co:5432/postgres"
 )
 
 
