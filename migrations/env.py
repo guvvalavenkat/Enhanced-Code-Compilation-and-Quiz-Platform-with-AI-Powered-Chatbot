@@ -9,8 +9,9 @@ import os
 # Your Railway DB URL
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql+psycopg2://postgres:KroLYKAvjymiiGjaKiEgKwXwbzLQnvr@metro.proxy.rlwy.net:36971/railway"
+    "postgresql+psycopg2://postgres:KroLYKAvjymiiGjaKiEgKwXwbzLQnqvr@metro.proxy.rlwy.net:36971/railway"
 )
+
 
 # Alembic Config object
 config = context.config
